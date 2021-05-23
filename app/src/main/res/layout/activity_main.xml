@@ -11,7 +11,6 @@
   </data>
 
   <androidx.constraintlayout.widget.ConstraintLayout
-
     android:id="@+id/activity_maps_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,7 +27,6 @@
       android:layout_marginEnd="@dimen/horizontal_margin"
       android:layout_marginBottom="@dimen/vertical_margin"
       android:fontFamily="@font/della_respira"
-      android:text="@{context.getString(viewmodel.geofenceHintResourceId)}"
       android:textAlignment="center"
       android:textSize="@dimen/hint_text_size"
       android:textStyle="bold"
@@ -50,7 +48,6 @@
       android:layout_width="match_parent"
       android:layout_height="0dp"
       android:contentDescription="@string/android_map_description"
-      android:src="@{context.getDrawable(viewmodel.geofenceImageResourceId)}"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
