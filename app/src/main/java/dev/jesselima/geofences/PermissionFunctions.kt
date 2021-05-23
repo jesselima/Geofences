@@ -12,6 +12,10 @@ fun Context.isPermissionGranted(permission: String): Boolean {
         )
     }
 
+fun isPermissionResultDenied(grantedResult: Int) : Boolean {
+    return grantedResult == PackageManager.PERMISSION_DENIED
+}
+
 fun isAndroidOsEqualsOrGreaterThan(osVersion: Int): Boolean {
     return Build.VERSION.SDK_INT >= osVersion
 }

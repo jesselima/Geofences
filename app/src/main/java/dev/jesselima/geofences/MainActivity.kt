@@ -8,11 +8,16 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.material.snackbar.Snackbar
 import dev.jesselima.geofences.databinding.ActivityMainBinding
 
@@ -97,9 +102,12 @@ class MainActivity : AppCompatActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
         if (
             (grantResults.isEmpty() || isPermissionResultDenied(grantResults[LOCATION_PERMISSION_INDEX])) ||
-            (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE) && grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED
+            (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE) &&
+            grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED
         ) {
             Snackbar.make(
                 binding.activityMapsMain,
@@ -118,12 +126,52 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkDeviceLocationSettingsStartGeofence() {
+    private fun checkDeviceLocationSettingsStartGeofence(resolve: Boolean = true) {
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_LOW_POWER
+        }
+        val locationBuilder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+            .build()
+        val settingsClient = LocationServices.getSettingsClient(this)
+        val locationSettingsResponseTask = settingsClient.checkLocationSettings(locationBuilder)
+
+        locationSettingsResponseTask.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException && resolve) {
+                // Prompt the suer to turn on the location
+                runCatching {
+                    exception.startResolutionForResult(this@MainActivity, REQUEST_TURN_DEVICE_LOCATION_ON)
+                }.onFailure { throwable ->
+                    Log.d(this@MainActivity::class.java.simpleName, "Error getting location service resolution! ${throwable.message}")
+                }
+            } else {
+                Snackbar.make(
+                    binding.activityMapsMain,
+                    R.string.location_required_error,
+                    Snackbar.LENGTH_INDEFINITE
+                ).setAction(android.R.string.ok) {
+                    checkDeviceLocationSettingsStartGeofence()
+                }.show()
+            }
+        }
+
+        locationSettingsResponseTask.addOnCompleteListener {
+            if (it.isSuccessful) {
+                addGeofenceForClue()
+            }
+        }
+    }
+
+    private fun addGeofenceForClue() {
         // TODO("Not yet implemented")
     }
 
-    private fun isPermissionResultDenied(grantedResult: Int) : Boolean {
-        return grantedResult == PackageManager.PERMISSION_DENIED
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
+            checkDeviceLocationSettingsStartGeofence(resolve = false)
+        }
     }
 
 
