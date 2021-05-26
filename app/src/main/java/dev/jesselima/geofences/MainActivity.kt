@@ -224,18 +224,12 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     geofenceClient.addGeofences(geofenceRequest, geofencePendingIntent).run {
                         addOnSuccessListener {
-                            Toast.makeText(
-                                this@MainActivity,
-                                R.string.geofences_added,
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            showToast(stringResId = R.string.geofences_added)
                             Log.e("Add Geofence", geofence.requestId)
                             viewModel.geofenceActivated()
                         }
                         addOnFailureListener {
-                            Toast.makeText(this@MainActivity, R.string.geofences_not_added,
-                                Toast.LENGTH_SHORT).show()
-
+                            showToast(stringResId = R.string.geofences_not_added)
                             if(it.message.isNullOrEmpty().not()) {
                                 Log.w(this@MainActivity::class.java.simpleName, it.message.toString())
                             }
