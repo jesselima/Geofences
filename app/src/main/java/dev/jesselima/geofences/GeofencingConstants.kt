@@ -38,6 +38,12 @@ internal object GeofencingConstants {
             R.string.union_square_hint,
             R.string.union_square_location,
             LatLng(37.788151, -122.407570)
+        ),
+        LandmarkData(
+            "Lombard street",
+            R.string.lombard_street_hint,
+            R.string.lombard_street_location,
+            LatLng(37.801205, -122.426752)
         )
     )
 }

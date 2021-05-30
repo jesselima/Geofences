@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
@@ -276,7 +277,24 @@ class HuntMainActivity : AppCompatActivity() {
     }
 
     private fun removeGeofences() {
-        // TODO("Not yet implemented")
+        if (!foregroundAndBackgroundLocationPermissionApproved()) {
+            return
+        }
+        geofenceClient.removeGeofences(geofencePendingIntent).run {
+            addOnSuccessListener {
+                Log.d(tag, getString(R.string.geofences_removed))
+                Toast.makeText(applicationContext, R.string.geofences_removed, Toast.LENGTH_SHORT)
+                    .show()
+            }
+            addOnFailureListener {
+                Log.d(tag, getString(R.string.geofences_not_removed))
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        removeGeofences()
     }
 
 
