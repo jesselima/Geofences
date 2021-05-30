@@ -27,32 +27,27 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     private val TAG = GeofenceBroadcastReceiver::class.java.simpleName
 
     override fun onReceive(context: Context, intent: Intent) {
-
         Log.d(TAG, "---> onReceive Called!")
 
         if (intent.action == HuntMainActivity.ACTION_GEOFENCE_EVENT) {
-
             Log.d(TAG, "---> action is ACTION_GEOFENCE_EVENT!")
 
             val geofencingEvent = GeofencingEvent.fromIntent(intent)
 
             if (geofencingEvent.hasError()) {
                 val errorMessage = handleGeofenceError(context, geofencingEvent.errorCode)
-                Log.d(this::class.java.simpleName, "---> GeofenceEvent has Error: $errorMessage")
+                Log.d(TAG, "---> GeofenceEvent has Error: $errorMessage")
                 return
             }
 
             if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                Log.d(this::class.java.simpleName, context.getString(R.string.geofence_entered))
+                Log.d(TAG, context.getString(R.string.geofence_entered))
                 val fenceId = when {
                     geofencingEvent.triggeringGeofences.isNotEmpty() -> {
                         geofencingEvent.triggeringGeofences.first().requestId
                     }
                     else -> {
-                        Log.d(
-                            this::class.java.simpleName,
-                            "---> No Geofence trigger found! Houston! We have a situation."
-                        )
+                        Log.d(TAG,"No Geofence trigger found! Houston! We have a situation.")
                         return
                     }
                 }
@@ -62,7 +57,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                 }
 
                 if (INVALID_INDEX == foundGeofenceIndex) {
-                    Log.d(this::class.java.simpleName, "---> Unknown Geofence: Errrrrooooou!")
+                    Log.d(TAG, "---> Unknown Geofence.")
                     return
                 }
 
