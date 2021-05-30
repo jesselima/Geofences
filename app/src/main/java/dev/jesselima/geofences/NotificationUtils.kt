@@ -44,7 +44,7 @@ fun createChannel(context: Context) {
  * with the LANDMARK_DATA from GeofencingConstants in the GeofenceUtils file.
  */
 fun NotificationManager.sendGeofenceEnteredNotification(context: Context, foundIndex: Int) {
-    val contentIntent = Intent(context, MainActivity::class.java)
+    val contentIntent = Intent(context, HuntMainActivity::class.java)
     contentIntent.putExtra(GeofencingConstants.EXTRA_KEY_GEOFENCE_INDEX, foundIndex)
     val contentPendingIntent = PendingIntent.getActivity(
         context,

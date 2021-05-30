@@ -5,16 +5,16 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 
 fun Context.isPermissionGranted(permission: String): Boolean {
-        return  ActivityCompat.checkSelfPermission(
-            this,
-            permission
-        ) != PackageManager.PERMISSION_GRANTED
+    return  PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+        this,
+        permission
+    )
 }
 
-fun isDenied(grantedResult: Int) : Boolean {
-    return grantedResult != PackageManager.PERMISSION_GRANTED
+fun isResultDenied(grantedResult: Int) : Boolean {
+    return grantedResult == PackageManager.PERMISSION_DENIED
 }
 
-fun isGranted(grantedResult: Int) : Boolean {
+fun isResultGranted(grantedResult: Int) : Boolean {
     return grantedResult == PackageManager.PERMISSION_GRANTED
 }
